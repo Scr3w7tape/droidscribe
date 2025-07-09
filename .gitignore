@@ -1,0 +1,12 @@
+# Python virtual environment
+venv/
+
+# Environment variables file with secrets
+.env
+
+# Generated application output folder
+GeneratedApp/
+
+# Python cache files
+__pycache__/
+*.pyc
