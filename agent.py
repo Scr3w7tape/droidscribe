@@ -1,11 +1,23 @@
+import json
 from gemini_client import get_gemini_client, generate_code
-from file_manager import copy_template, save_files_from_ai
+from file_manager import copy_template, save_static_file, save_files_from_ai
 from gradle_runner import run_gradle_build
 
-def create_android_app(prompt):
+def create_android_app(blueprint_path):
     """
-    Main orchestration logic for the Droidscribe agent using a template.
+    Main orchestration logic for the Droidscribe agent.
+    Reads a JSON blueprint and generates an app from it.
     """
+    try:
+        with open(blueprint_path, 'r') as f:
+            blueprint = json.load(f)
+    except FileNotFoundError:
+        print(f"❌ Error: Blueprint file not found at '{blueprint_path}'")
+        return
+    except json.JSONDecodeError:
+        print(f"❌ Error: Blueprint file '{blueprint_path}' is not valid JSON.")
+        return
+
     project_name = "GeneratedApp"
     template_dir = "template"
 
@@ -13,46 +25,51 @@ def create_android_app(prompt):
     if not copy_template(template_dir, project_name):
         return
 
-    # 2. Construct a more focused prompt for the AI
-    detailed_prompt = f"""
-You are Droidscribe, an expert Android developer.
-A user wants an app with the following description: "{prompt}".
+    # 2. Process the files specified in the blueprint
+    print("⚙️  Processing blueprint...")
+    for file_spec in blueprint.get("filesToGenerate", []):
+        file_path = file_spec.get("path")
+        file_type = file_spec.get("type")
 
-Your task is to generate ONLY the necessary Kotlin source code and Gradle build files to bring this app to life.
-A project structure with a working Gradle wrapper already exists. You only need to provide the content for the following files.
+        if not file_path or not file_type:
+            continue
 
-**Output Format:**
-You MUST generate the content for each file, enclosed in a code block with the file path specified after the opening backticks. For example: ```FILE: path/to/your/file.kt ... ```
+        if file_type == "StaticContent":
+            content = file_spec.get("content", "")
+            save_static_file(project_name, file_path, content)
 
-**Files to Generate:**
-- `build.gradle.kts` (Root level)
-- `settings.gradle.kts`
-- `app/build.gradle.kts`
-- `app/src/main/AndroidManifest.xml`
-- `app/src/main/java/com/example/generatedapp/MainActivity.kt`
-- `app/src/main/java/com/example/generatedapp/ui/theme/Theme.kt`
-- `app/src/main/java/com/example/generatedapp/ui/theme/Color.kt`
-- `app/src/main/java/com/example/generatedapp/ui/theme/Type.kt`
+        elif file_type == "ComposeScreen":
+            spec = file_spec.get("spec", {})
+            imports = file_spec.get("imports", [])
+            
+            # Format the imports for the prompt
+            import_statements = "\\n".join([f"import {imp}" for imp in imports])
 
-Ensure the code is modern, uses Jetpack Compose, and is fully functional.
-    """
-    
-    # 3. Get Gemini client and generate the code
-    model = get_gemini_client()
-    generated_code = generate_code(model, detailed_prompt)
-    if not generated_code:
-        print("Stopping due to code generation failure.")
-        return
+            prompt = f"""You are a code generation engine. You only respond with code.
+Your entire response will be a single code block for the specified file path.
+Do not include any other text, conversation, or markdown formatting.
 
-    # 4. Save the AI-generated files over the template placeholders
-    save_files_from_ai(generated_code, project_name)
-    
-    # 5. Run the Gradle build
+Generate the Kotlin code for the file at path `{file_path}`.
+
+**CRITICAL INSTRUCTIONS:**
+- The package name MUST be `{blueprint.get("packageName", "com.example.generatedapp")}`.
+- You MUST include the following import statements:
+{import_statements}
+- Implement the logic based on this JSON specification:
+```json
+{json.dumps(spec, indent=2)}
+```
+"""
+            model = get_gemini_client()
+            generated_code = generate_code(model, prompt)
+            if generated_code:
+                save_files_from_ai(generated_code, project_name, file_path)
+
+    # 3. Run the Gradle build
     success, output = run_gradle_build(project_name)
     
     if success:
         print("\n🎉 Droidscribe finished successfully! Your app is ready.")
     else:
-        print("\n🔥 Droidscribe encountered errors. See build output above.")
-
+        print("\nDroidscribe encountered errors. See build output above.")
 

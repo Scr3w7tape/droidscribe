@@ -8,17 +8,17 @@ def run_gradle_build(project_dir):
     print("🛠️  Attempting to build the APK with Gradle...")
     gradlew_path = os.path.join(project_dir, "gradlew")
 
-    # This check correctly verifies the script exists before we try to run it.
     if not os.path.exists(gradlew_path):
         print(f"❌ Error: gradlew wrapper not found at '{gradlew_path}'.")
         return False, "Gradle wrapper not found."
 
-    # Make gradlew executable
     os.chmod(gradlew_path, 0o755)
 
     try:
-        # The fix is here: We now call './gradlew' relative to the project_dir,
-        # which is set as the current working directory (cwd).
+        # Stop any daemons to ensure a fresh start
+        subprocess.run(["./gradlew", "--stop"], cwd=project_dir, capture_output=True, text=True)
+
+        # Run the standard build command.
         process = subprocess.run(
             ["./gradlew", "assembleDebug"],
             cwd=project_dir,

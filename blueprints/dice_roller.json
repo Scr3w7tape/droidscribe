@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "1.1",
+  "appName": "Simple Dice Roller",
+  "packageName": "com.example.generatedapp",
+  "filesToGenerate": [
+    {
+      "path": "app/src/main/java/com/example/generatedapp/ui/theme/Color.kt",
+      "type": "StaticContent",
+      "content": "package com.example.generatedapp.ui.theme\n\nimport androidx.compose.ui.graphics.Color\n\nval Purple80 = Color(0xFFD0BCFF)\nval PurpleGrey80 = Color(0xFFCCC2DC)\nval Pink80 = Color(0xFFEFB8C8)\n\nval Purple40 = Color(0xFF6650a4)\nval PurpleGrey40 = Color(0xFF625b71)\nval Pink40 = Color(0xFF7D5260)\n"
+    },
+    {
+      "path": "app/src/main/java/com/example/generatedapp/ui/theme/Type.kt",
+      "type": "StaticContent",
+      "content": "package com.example.generatedapp.ui.theme\n\nimport androidx.compose.material3.Typography\nimport androidx.compose.ui.text.TextStyle\nimport androidx.compose.ui.text.font.FontFamily\nimport androidx.compose.ui.text.font.FontWeight\nimport androidx.compose.ui.unit.sp\n\nval Typography = Typography(\n    bodyLarge = TextStyle(\n        fontFamily = FontFamily.Default,\n        fontWeight = FontWeight.Normal,\n        fontSize = 16.sp,\n        lineHeight = 24.sp,\n        letterSpacing = 0.5.sp\n    )\n)\n"
+    },
+    {
+      "path": "app/src/main/java/com/example/generatedapp/ui/theme/Theme.kt",
+      "type": "StaticContent",
+      "content": "package com.example.generatedapp.ui.theme\n\nimport android.app.Activity\nimport androidx.compose.foundation.isSystemInDarkTheme\nimport androidx.compose.material3.MaterialTheme\nimport androidx.compose.material3.darkColorScheme\nimport androidx.compose.material3.lightColorScheme\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.SideEffect\nimport androidx.compose.ui.graphics.toArgb\nimport androidx.compose.ui.platform.LocalView\nimport androidx.core.view.WindowCompat\n\nprivate val DarkColorScheme = darkColorScheme(\n    primary = Purple80,\n    secondary = PurpleGrey80,\n    tertiary = Pink80\n)\n\nprivate val LightColorScheme = lightColorScheme(\n    primary = Purple40,\n    secondary = PurpleGrey40,\n    tertiary = Pink40\n)\n\n@Composable\nfun GeneratedAppTheme(\n    darkTheme: Boolean = isSystemInDarkTheme(),\n    content: @Composable () -> Unit\n) {\n    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme\n    val view = LocalView.current\n    if (!view.isInEditMode) {\n        SideEffect {\n            val window = (view.context as Activity).window\n            window.statusBarColor = colorScheme.primary.toArgb()\n            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme\n        }\n    }\n\n    MaterialTheme(\n        colorScheme = colorScheme,\n        typography = Typography,\n        content = content\n    )\n}\n"
+    },
+    {
+      "path": "app/src/main/java/com/example/generatedapp/MainActivity.kt",
+      "type": "ComposeScreen",
+      "imports": [
+        "android.os.Bundle",
+        "androidx.activity.ComponentActivity",
+        "androidx.activity.compose.setContent",
+        "androidx.compose.foundation.layout.Arrangement",
+        "androidx.compose.foundation.layout.Column",
+        "androidx.compose.foundation.layout.Spacer",
+        "androidx.compose.foundation.layout.fillMaxSize",
+        "androidx.compose.foundation.layout.height",
+        "androidx.compose.foundation.layout.wrapContentSize",
+        "androidx.compose.material3.Button",
+        "androidx.compose.material3.MaterialTheme",
+        "androidx.compose.material3.Surface",
+        "androidx.compose.material3.Text",
+        "androidx.compose.runtime.Composable",
+        "androidx.compose.runtime.getValue",
+        "androidx.compose.runtime.mutableStateOf",
+        "androidx.compose.runtime.remember",
+        "androidx.compose.runtime.setValue",
+        "androidx.compose.ui.Alignment",
+        "androidx.compose.ui.Modifier",
+        "androidx.compose.ui.tooling.preview.Preview",
+        "androidx.compose.ui.unit.dp",
+        "androidx.compose.ui.unit.sp",
+        "com.example.generatedapp.ui.theme.GeneratedAppTheme"
+      ],
+      "spec": {
+        "composableName": "DiceRollerApp",
+        "state": [
+          {
+            "name": "diceValue",
+            "type": "Int",
+            "initialValue": "1",
+            "remember": true
+          }
+        ],
+        "layout": {
+          "component": "Column",
+          "modifier": [
+            "Modifier.fillMaxSize()",
+            "Modifier.wrapContentSize(Alignment.Center)"
+          ],
+          "properties": {
+            "horizontalAlignment": "Alignment.CenterHorizontally"
+          },
+          "children": [
+            {
+              "component": "Text",
+              "properties": {
+                "text": "diceValue.toString()",
+                "fontSize": "60.sp"
+              }
+            },
+            {
+              "component": "Spacer",
+              "modifier": [
+                "Modifier.height(16.dp)"
+              ]
+            },
+            {
+              "component": "Button",
+              "onClick": {
+                "action": "updateState",
+                "targetState": "diceValue",
+                "newValue": "(1..6).random()"
+              },
+              "children": [
+                {
+                  "component": "Text",
+                  "properties": {
+                    "text": "\"Roll\""
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+
