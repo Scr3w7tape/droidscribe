@@ -1,0 +1,127 @@
+{
+  "schemaVersion": "1.1",
+  "appName": "Simple Tip Calculator",
+  "packageName": "com.example.generatedapp",
+  "spec": {
+    "fileToGenerate": "app/src/main/java/com/example/generatedapp/MainActivity.kt",
+    "imports": [
+      "android.os.Bundle",
+      "androidx.activity.ComponentActivity",
+      "androidx.activity.compose.setContent",
+      "androidx.compose.foundation.layout.*",
+      "androidx.compose.foundation.text.KeyboardOptions",
+      "androidx.compose.material3.*",
+      "androidx.compose.runtime.*",
+      "androidx.compose.ui.Alignment",
+      "androidx.compose.ui.Modifier",
+      "androidx.compose.ui.text.input.KeyboardType",
+      "androidx.compose.ui.tooling.preview.Preview",
+      "androidx.compose.ui.unit.dp",
+      "com.example.generatedapp.ui.theme.GeneratedAppTheme",
+      "java.text.NumberFormat"
+    ],
+    "ui": {
+      "composableName": "TipCalculatorScreen",
+      "state": [
+        {
+          "name": "billAmountInput",
+          "type": "String",
+          "initialValue": "\"\""
+        },
+        {
+          "name": "tipPercent",
+          "type": "Float",
+          "initialValue": "15f"
+        }
+      ],
+      "layout": {
+        "component": "Column",
+        "modifier": [
+          "Modifier.fillMaxSize()",
+          "Modifier.padding(32.dp)"
+        ],
+        "properties": {
+          "verticalArrangement": "Arrangement.Center",
+          "horizontalAlignment": "Alignment.CenterHorizontally"
+        },
+        "children": [
+          {
+            "component": "Text",
+            "properties": {
+              "text": "\"Calculate Tip\"",
+              "style": "MaterialTheme.typography.headlineSmall"
+            }
+          },
+          {
+            "component": "Spacer",
+            "modifier": ["Modifier.height(16.dp)"]
+          },
+          {
+            "component": "OutlinedTextField",
+            "properties": {
+              "value": "billAmountInput",
+              "onValueChange": "billAmountInput = it",
+              "label": "{\"text\": \"Bill Amount\"}",
+              "singleLine": "true",
+              "keyboardOptions": "KeyboardOptions(keyboardType = KeyboardType.Number)"
+            }
+          },
+          {
+            "component": "Spacer",
+            "modifier": ["Modifier.height(24.dp)"]
+          },
+          {
+            "component": "Text",
+            "properties": {
+              "text": "\"Tip: ${tipPercent.toInt()}%\""
+            }
+          },
+          {
+            "component": "Slider",
+            "properties": {
+                "value": "tipPercent",
+                "onValueChange": "tipPercent = it",
+                "valueRange": "0f..30f",
+                "steps": "5"
+            }
+          },
+          {
+            "component": "Spacer",
+            "modifier": ["Modifier.height(24.dp)"]
+          },
+          {
+            "component": "Text",
+            "properties": {
+                "text": "\"Tip Amount: ${/* calculatedTip */}\"",
+                "style": "MaterialTheme.typography.bodyLarge"
+            }
+          },
+          {
+            "component": "Text",
+            "properties": {
+                "text": "\"Total Amount: ${/* calculatedTotal */}\"",
+                "style": "MaterialTheme.typography.bodyLarge"
+            }
+          }
+        ]
+      },
+      "logic": {
+        "calculations": [
+            {
+                "variableName": "amount",
+                "expression": "billAmountInput.toDoubleOrNull() ?: 0.0"
+            },
+            {
+                "variableName": "tip",
+                "expression": "NumberFormat.getCurrencyInstance().format(amount * tipPercent / 100)"
+            },
+            {
+                "variableName": "total",
+                "expression": "NumberFormat.getCurrencyInstance().format(amount + (amount * tipPercent / 100))"
+            }
+        ]
+      }
+    }
+  }
+}
+

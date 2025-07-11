@@ -4,13 +4,18 @@ import os
 def run_gradle_build(project_dir):
     """
     Runs './gradlew assembleDebug' in the specified project directory.
+    
+    Returns:
+        (bool, str): A tuple containing a boolean for success/failure
+                     and the relevant output (stdout for success, stderr for failure).
     """
     print("🛠️  Attempting to build the APK with Gradle...")
     gradlew_path = os.path.join(project_dir, "gradlew")
 
     if not os.path.exists(gradlew_path):
-        print(f"❌ Error: gradlew wrapper not found at '{gradlew_path}'.")
-        return False, "Gradle wrapper not found."
+        error_message = f"❌ Error: gradlew wrapper not found at '{gradlew_path}'."
+        print(error_message)
+        return False, error_message
 
     os.chmod(gradlew_path, 0o755)
 
@@ -27,10 +32,9 @@ def run_gradle_build(project_dir):
             check=True
         )
         print("✅ Build successful!")
-        print(process.stdout)
         return True, process.stdout
     except subprocess.CalledProcessError as e:
+        # On failure, return False and the standard error output.
         print("❌ Build failed!")
-        print(e.stderr)
         return False, e.stderr
 

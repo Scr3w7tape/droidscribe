@@ -1,0 +1,78 @@
+```kotlin
+package com.example.generatedapp
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.generatedapp.ui.theme.GeneratedAppTheme
+import java.text.NumberFormat
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            GeneratedAppTheme {
+                TipCalculatorScreen()
+            }
+        }
+    }
+}
+
+@Composable
+fun TipCalculatorScreen() {
+    var billAmountInput by remember { mutableStateOf("") }
+    var tipPercent by remember { mutableStateOf(15f) }
+
+    val amount = billAmountInput.toDoubleOrNull() ?: 0.0
+    val tipAmount = amount * tipPercent / 100
+    val tip = NumberFormat.getCurrencyInstance().format(tipAmount)
+    val total = NumberFormat.getCurrencyInstance().format(amount + tipAmount)
+
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Calculate Tip", style = MaterialTheme.typography.headlineSmall)
+        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedTextField(
+            value = billAmountInput,
+            onValueChange = { billAmountInput = it },
+            label = { Text("Bill Amount") },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(text = "Tip: ${tipPercent.toInt()}%")
+        Slider(
+            value = tipPercent,
+            onValueChange = { tipPercent = it },
+            valueRange = 0f..30f,
+            steps = 5
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(text = "Tip Amount: $tip", style = MaterialTheme.typography.bodyLarge)
+        Text(text = "Total Amount: $total", style = MaterialTheme.typography.bodyLarge)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+    GeneratedAppTheme {
+        TipCalculatorScreen()
+    }
+}
+```
